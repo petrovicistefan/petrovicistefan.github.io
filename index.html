@@ -1,229 +1,686 @@
-<!DOCTYPE HTML>
-<!--
-	Massively by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Massively by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stefan Petrovici — Bug Fixing for Web Apps &amp; WooCommerce Stores</title>
+<meta name="description" content="The most-searched web bugs of 2026 — hydration errors, CORS, poor INP, emails landing in spam, pages not indexed, AI-built apps breaking in production, slow WooCommerce stores — and how we fix them: 48h audit, fix sprint or monthly maintenance." />
+<meta property="og:title" content="The 2026 bugs we fix — and how" />
+<meta property="og:description" content="Symptom → root cause → fix → engagement type. 48-hour express audit. Remote, EU / UK / US." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0d1117" />
+<link rel="icon" href="https://github.com/petrovicistefan.png?size=64" />
+<link rel="apple-touch-icon" href="https://github.com/petrovicistefan.png?size=180" />
+<meta property="og:image" content="https://github.com/petrovicistefan.png?size=400" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1f2630;
+    --border: #2b3440;
+    --text: #e6edf3;
+    --muted: #8b98a8;
+    --accent: #3fb950;
+    --accent-ink: #04120a;
+    --warn: #f0883e;
+    --err: #ff7b72;
+    --info: #79c0ff;
+    --radius: 14px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa;
+      --surface: #ffffff;
+      --surface-2: #eef1f4;
+      --border: #d5dbe1;
+      --text: #1f2328;
+      --muted: #59636e;
+      --accent: #1a7f37;
+      --accent-ink: #ffffff;
+      --warn: #bc4c00;
+      --err: #cf222e;
+      --info: #0969da;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--info); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
-		<!-- Wrapper -->
-			<div id="wrapper" class="fade-in">
+  /* Nav */
+  nav.top {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
+  .brand { font-family: var(--mono); font-weight: 600; color: var(--text); text-decoration: none; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; }
+  .brand img { border-radius: 50%; border: 1px solid var(--border); }
+  .brand b { font-weight: 600; }
+  .brand span { color: var(--accent); }
+  nav.top ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+  nav.top ul a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  nav.top ul a:hover { color: var(--text); }
+  @media (max-width: 720px) { nav.top ul { display: none; } }
 
-				<!-- Intro -->
-					<div id="intro">
-						<h1>This is<br />
-						Massively</h1>
-						<p>A free, fully responsive HTML5 + CSS3 site template designed by <a href="https://twitter.com/ajlkn">@ajlkn</a> for <a href="https://html5up.net">HTML5 UP</a><br />
-						and released for free under the <a href="https://html5up.net/license">Creative Commons license</a>.</p>
-						<ul class="actions">
-							<li><a href="#header" class="button icon solid solo fa-arrow-down scrolly">Continue</a></li>
-						</ul>
-					</div>
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: 10px;
+    font-weight: 600; font-size: 15px; text-decoration: none;
+    border: 1px solid var(--border); color: var(--text); background: var(--surface);
+    transition: transform .15s, border-color .15s;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: var(--muted); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn.sm { padding: 8px 14px; font-size: 14px; }
 
-				<!-- Header -->
-					<header id="header">
-						<a href="index.html" class="logo">Massively</a>
-					</header>
+  /* Hero */
+  .hero { padding: 88px 0 64px; }
+  .eyebrow { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: .02em; }
+  .hero h1 { font-size: clamp(36px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.03em; margin: 14px 0 20px; font-weight: 800; }
+  .hero h1 .strike { color: var(--err); text-decoration: line-through; text-decoration-thickness: 4px; }
+  .hero p.lead { font-size: clamp(17px, 2vw, 20px); color: var(--muted); max-width: 680px; margin: 0 0 32px; }
+  .hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 
-				<!-- Nav -->
-					<nav id="nav">
-						<ul class="links">
-							<li class="active"><a href="index.html">This is Massively</a></li>
-							<li><a href="generic.html">Generic Page</a></li>
-							<li><a href="elements.html">Elements Reference</a></li>
-						</ul>
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-						</ul>
-					</nav>
+  .terminal {
+    margin-top: 48px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; font-family: var(--mono); font-size: 13.5px;
+  }
+  .terminal .bar { display: flex; gap: 7px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .terminal .bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--border); display: block; }
+  .terminal pre { margin: 0; padding: 18px 20px; overflow-x: auto; line-height: 1.75; }
+  .t-err { color: var(--err); } .t-ok { color: var(--accent); } .t-dim { color: var(--muted); } .t-warn { color: var(--warn); }
 
-				<!-- Main -->
-					<div id="main">
+  section { padding: 72px 0; }
+  section h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 10px; line-height: 1.15; }
+  section .sub { color: var(--muted); margin: 0 0 36px; max-width: 680px; }
 
-						<!-- Featured Post -->
-							<article class="post featured">
-								<header class="major">
-									<span class="date">April 25, 2017</span>
-									<h2><a href="#">And this is a<br />
-									massive headline</a></h2>
-									<p>Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br />
-									facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br />
-									amet nullam sed etiam veroeros.</p>
-								</header>
-								<a href="#" class="image main"><img src="images/pic01.jpg" alt="" /></a>
-								<ul class="actions special">
-									<li><a href="#" class="button large">Full Story</a></li>
-								</ul>
-							</article>
+  /* Filters */
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 24px; }
+  .search {
+    flex: 1 1 260px; min-width: 0;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    border-radius: 10px; padding: 11px 14px; font: 15px var(--sans);
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font: 500 13px var(--sans); padding: 7px 13px; border-radius: 999px; cursor: pointer;
+    background: var(--surface); color: var(--muted); border: 1px solid var(--border);
+  }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-						<!-- Posts -->
-							<section class="posts">
-								<article>
-									<header>
-										<span class="date">April 24, 2017</span>
-										<h2><a href="#">Sed magna<br />
-										ipsum faucibus</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic02.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<span class="date">April 22, 2017</span>
-										<h2><a href="#">Primis eget<br />
-										imperdiet lorem</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic03.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<span class="date">April 18, 2017</span>
-										<h2><a href="#">Ante mattis<br />
-										interdum dolor</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic04.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<span class="date">April 14, 2017</span>
-										<h2><a href="#">Tempus sed<br />
-										nulla imperdiet</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic05.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<span class="date">April 11, 2017</span>
-										<h2><a href="#">Odio magna<br />
-										sed consectetur</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic06.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<span class="date">April 7, 2017</span>
-										<h2><a href="#">Augue lorem<br />
-										primis vestibulum</a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/pic07.jpg" alt="" /></a>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis magna etiam.</p>
-									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul>
-								</article>
-							</section>
+  /* Bug cards */
+  .bugs { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  @media (max-width: 400px) { .bugs { grid-template-columns: 1fr; } }
+  .bug {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 22px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .bug[hidden] { display: none; }
+  .bug .meta { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .tag { font: 600 11.5px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .badge { font: 600 12px var(--sans); padding: 4px 10px; border-radius: 999px; white-space: nowrap; border: 1px solid; }
+  .badge.audit { color: var(--info); border-color: color-mix(in srgb, var(--info) 45%, transparent); }
+  .badge.sprint { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .badge.retainer { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .bug h3 { margin: 0; font-size: 18px; line-height: 1.3; }
+  .bug code.err {
+    display: block; font: 12.5px/1.5 var(--mono); color: var(--err);
+    background: var(--surface-2); padding: 10px 12px; border-radius: 8px; word-break: break-word;
+  }
+  .bug p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .bug details { border-top: 1px dashed var(--border); padding-top: 12px; margin-top: auto; }
+  .bug summary { cursor: pointer; font-weight: 600; font-size: 14.5px; color: var(--text); list-style: none; }
+  .bug summary::-webkit-details-marker { display: none; }
+  .bug summary::before { content: "+ "; font-family: var(--mono); color: var(--accent); }
+  .bug details[open] summary::before { content: "− "; }
+  .bug details ol { margin: 10px 0 0; padding-left: 20px; font-size: 14.5px; color: var(--muted); }
+  .bug details li { margin-bottom: 6px; }
+  .bug details li b { color: var(--text); font-weight: 600; }
+  .plug { display:inline-flex; gap:6px; align-items:center; font: 600 13px var(--sans); color: var(--accent); text-decoration:none; margin-top:10px; }
+  .plug:hover { text-decoration: underline; }
+  .plugins { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
+  .pcard { background: var(--surface); border:1px solid var(--border); border-radius: var(--radius); padding:20px; text-decoration:none; color:var(--text); display:flex; flex-direction:column; gap:8px; transition: border-color .15s, transform .15s; }
+  .pcard:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .pcard h3 { margin:0; font-size:16px; }
+  .pcard p { margin:0; color:var(--muted); font-size:14px; }
+  .pcard .fixes { font: 12px var(--mono); color: var(--err); }
+  .price { font: 600 12px var(--mono); color: var(--accent); }
+  .price.paid { color: var(--warn); }
+  .trust { display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:28px; color:var(--muted); font-size:14px; }
+  .trust b { color: var(--text); }
+  .empty { color: var(--muted); font-style: italic; display: none; }
 
-						<!-- Footer -->
-							<footer>
-								<div class="pagination">
-									<!--<a href="#" class="previous">Prev</a>-->
-									<a href="#" class="page active">1</a>
-									<a href="#" class="page">2</a>
-									<a href="#" class="page">3</a>
-									<span class="extra">&hellip;</span>
-									<a href="#" class="page">8</a>
-									<a href="#" class="page">9</a>
-									<a href="#" class="page">10</a>
-									<a href="#" class="next">Next</a>
-								</div>
-							</footer>
+  /* Engagement models */
+  .models { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .model { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .model.featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .model h3 { margin: 0; font-size: 21px; }
+  .model .when { font: 13px var(--mono); color: var(--muted); }
+  .model ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  .model ul li { margin-bottom: 6px; }
+  .model .btn { margin-top: auto; align-self: flex-start; }
 
-					</div>
+  /* Process */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; counter-reset: s; }
+  .step { padding: 22px; border-left: 2px solid var(--border); }
+  .step::before { counter-increment: s; content: "0" counter(s); font: 600 14px var(--mono); color: var(--accent); }
+  .step h3 { margin: 8px 0 6px; font-size: 17px; }
+  .step p { margin: 0; color: var(--muted); font-size: 15px; }
 
-				<!-- Footer -->
-					<footer id="footer">
-						<section>
-							<form method="post" action="#">
-								<div class="fields">
-									<div class="field">
-										<label for="name">Name</label>
-										<input type="text" name="name" id="name" />
-									</div>
-									<div class="field">
-										<label for="email">Email</label>
-										<input type="text" name="email" id="email" />
-									</div>
-									<div class="field">
-										<label for="message">Message</label>
-										<textarea name="message" id="message" rows="3"></textarea>
-									</div>
-								</div>
-								<ul class="actions">
-									<li><input type="submit" value="Send Message" /></li>
-								</ul>
-							</form>
-						</section>
-						<section class="split contact">
-							<section class="alt">
-								<h3>Address</h3>
-								<p>1234 Somewhere Road #87257<br />
-								Nashville, TN 00000-0000</p>
-							</section>
-							<section>
-								<h3>Phone</h3>
-								<p><a href="#">(000) 000-0000</a></p>
-							</section>
-							<section>
-								<h3>Email</h3>
-								<p><a href="#">info@untitled.tld</a></p>
-							</section>
-							<section>
-								<h3>Social</h3>
-								<ul class="icons alt">
-									<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
-									<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-								</ul>
-							</section>
-						</section>
-					</footer>
+  /* FAQ */
+  .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; }
+  .faq summary { cursor: pointer; font-weight: 600; }
+  .faq details p { color: var(--muted); margin: 10px 0 0; }
 
-				<!-- Copyright -->
-					<div id="copyright">
-						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
-					</div>
+  /* CTA */
+  .cta { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: clamp(28px, 5vw, 56px); text-align: center; }
+  .cta h2 { margin-bottom: 12px; }
+  .cta p { color: var(--muted); max-width: 560px; margin: 0 auto 28px; }
+  .cta .ctas { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
 
-			</div>
+  footer.site { border-top: 1px solid var(--border); padding: 28px 0; color: var(--muted); font-size: 14px; }
+  footer.site .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer.site a { color: var(--muted); }
+</style>
+</head>
+<body>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="https://github.com/petrovicistefan.png?size=64" alt="Stefan Petrovici" width="30" height="30" /><b>stefan<span>.fix()</span></b></a>
+    <ul>
+      <li><a href="#bugs">Bugs</a></li>
+      <li><a href="#plugins">Plugins</a></li>
+      <li><a href="#engagements">Engagements</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn primary sm" href="#contact">Report a bug</a>
+  </div>
+</nav>
 
-	</body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">// debugging &amp; rescue for web apps and WooCommerce stores</div>
+    <h1>That bug you've been<br>googling for three days? <span class="strike">Unsolved</span> Fixed.</h1>
+    <p class="lead">Below are the bugs teams and store owners searched for most in 2026 — from hydration and CORS errors to emails landing in spam, slow WooCommerce stores and AI-generated apps that break in production. For each one: what you see, why it happens, and the engagement we use to close it.</p>
+    <div class="ctas">
+      <a class="btn primary" href="#bugs">Find your bug ↓</a>
+      <a class="btn" href="#engagements">How we work</a>
+    </div>
+    <div class="trust">
+      <span><b>Remote</b> · EU, UK &amp; US clients</span>
+      <span><b>CET/EET</b> · overlap with US mornings</span>
+      <span><b>Fixed price</b> · agreed before we start</span>
+      <span><b>9+ plugins</b> published for WordPress &amp; WooCommerce</span>
+    </div>
+
+    <div class="terminal" aria-hidden="true">
+      <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="t-dim">$</span> npm run build &amp;&amp; npm start
+<span class="t-err">Error: Hydration failed because the server rendered HTML didn't match the client.</span>
+<span class="t-warn">⚠ INP 640ms (poor) — Search Console: 214 URLs affected</span>
+<span class="t-err">Access to fetch at 'https://api…' has been blocked by CORS policy</span>
+<span class="t-dim">$</span> git checkout -b fix/production-rescue
+<span class="t-ok">✔ root cause found · ✔ fix + regression test · ✔ deployed · ✔ monitoring on</span></pre>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="bugs">
+  <div class="wrap">
+    <h2>The 2026 bug catalogue</h2>
+    <p class="sub">Search by error message or filter by category. Open “How we fix it” for the concrete steps. Where one of our plugins solves it out of the box, we link it.</p>
+
+    <div class="controls">
+      <input class="search" id="q" type="search" placeholder="e.g. CORS, spam, hydration, 429, WooCommerce…" aria-label="Search bugs" />
+      <div class="chips" role="group" aria-label="Category filter">
+        <button class="chip" data-cat="all" aria-pressed="true">All</button>
+        <button class="chip" data-cat="woo" aria-pressed="false">WordPress &amp; Woo</button>
+        <button class="chip" data-cat="frontend" aria-pressed="false">Frontend</button>
+        <button class="chip" data-cat="backend" aria-pressed="false">Backend &amp; infra</button>
+        <button class="chip" data-cat="seo" aria-pressed="false">SEO &amp; performance</button>
+        <button class="chip" data-cat="email" aria-pressed="false">Email</button>
+        <button class="chip" data-cat="security" aria-pressed="false">Security</button>
+        <button class="chip" data-cat="ai" aria-pressed="false">AI</button>
+      </div>
+    </div>
+
+    <div class="bugs" id="bugList">
+
+      <article class="bug" data-cat="ai">
+        <div class="meta"><span class="tag">AI · generated code</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>The “vibe-coded” app works locally, then breaks in production</h3>
+        <p>A prototype built fast with an AI assistant: missing validation, error handling and proper env config. With the first real users come corrupted data and blank screens.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li><b>Code audit</b> — map the critical flows (auth, payments, database writes).</li>
+          <li>Add input validation, error boundaries and logging (Sentry / OpenTelemetry).</li>
+          <li>Tests on the flows that make money, CI that blocks regressions.</li>
+          <li>Hand over code your team can actually maintain.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="frontend">
+        <div class="meta"><span class="tag">Next.js · React 19</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Hydration mismatch</h3>
+        <code class="err">Hydration failed because the server rendered HTML didn't match the client.</code>
+        <p>Dates, timezones, <code>window</code>, random IDs or browser extensions that touch the DOM make the server and client render different output.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Reproduce on a production build and isolate the offending component.</li>
+          <li>Move browser-only logic into <b>useEffect</b> / client components, use <b>useId</b>.</li>
+          <li>Split Server and Client Components correctly and check caching.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="backend">
+        <div class="meta"><span class="tag">API · browser</span><span class="badge audit">Express audit</span></div>
+        <h3>Blocked by CORS policy</h3>
+        <code class="err">has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header</code>
+        <p>Frontend and API on different domains, unhandled <code>OPTIONS</code> preflight, cookies sent with <code>credentials</code> against a <code>*</code> wildcard.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Configure CORS server-side with an explicit origin allow-list (no <b>*</b> with credentials).</li>
+          <li>Handle preflight at the gateway / CDN / reverse-proxy level.</li>
+          <li>Where it makes sense, remove the problem entirely with a same-origin proxy.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="woo">
+        <div class="meta"><span class="tag">WooCommerce · speed</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Slow WooCommerce store on mobile</h3>
+        <code class="err">LCP 4.8s · “Serve images in next-gen formats” · “Eliminate render-blocking resources”</code>
+        <p>Heavy JPEG/PNG product images, Google Fonts blocking render, too many plugins loading assets on every page, uncached cart fragments.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Convert the media library to <b>WebP/AVIF</b> and serve responsive sizes.</li>
+          <li>Drop external fonts for a system font stack, defer non-critical scripts.</li>
+          <li>Load plugin assets only where needed, fix cart-fragment and object caching.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/zero-config-webp" target="_blank" rel="noopener">→ Zero-Config WebP Converter (free)</a>
+        <a class="plug" href="https://pluginsforstores.com/plugin/system-font-stack" target="_blank" rel="noopener">→ System Font Stack (free)</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="seo">
+        <div class="meta"><span class="tag">Core Web Vitals</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Poor INP in Search Console</h3>
+        <code class="err">INP issue: longer than 200ms (mobile)</code>
+        <p>Clicks feel sluggish: too much JavaScript on the main thread, third-party scripts (chat, tracking, A/B testing), needless re-renders.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Measure on real-user data (RUM + CrUX), not just Lighthouse.</li>
+          <li>Break up long tasks, defer third-party scripts, shrink the bundle.</li>
+          <li>Validate in Search Console after the 28-day window.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="seo">
+        <div class="meta"><span class="tag">Google · indexing</span><span class="badge audit">Express audit</span></div>
+        <h3>“Crawled – currently not indexed”</h3>
+        <p>The pages exist but Google won't index them: client-only rendering, wrong canonicals, duplicates, stale sitemap, or a <code>noindex</code> left over from launch.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Technical audit: rendering, canonicals, robots, sitemap, internal links.</li>
+          <li>Move key pages to SSR / SSG, fix metadata and schema markup.</li>
+          <li>Prioritised report with estimated traffic impact.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/pluginforge-seo-automation" target="_blank" rel="noopener">→ SEO Automation Suite for WooCommerce</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="woo">
+        <div class="meta"><span class="tag">Accessibility · SEO</span><span class="badge audit">Express audit</span></div>
+        <h3>Thousands of images with missing alt text</h3>
+        <code class="err">Image elements do not have [alt] attributes</code>
+        <p>Flagged by Lighthouse and accessibility audits — and a real legal risk under the European Accessibility Act and ADA for stores selling in the EU and US.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Bulk-fill empty alt text from titles, then refine key product images.</li>
+          <li>Accessibility pass on checkout: contrast, labels, keyboard navigation.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/auto-image-alt-from-title" target="_blank" rel="noopener">→ Auto Image Alt From Title (free)</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="email">
+        <div class="meta"><span class="tag">Gmail · Outlook · Yahoo</span><span class="badge audit">Express audit</span></div>
+        <h3>Emails land in spam or get rejected</h3>
+        <code class="err">550 5.7.26 Unauthenticated email is not accepted… DMARC policy</code>
+        <p>The big inbox providers now enforce sender requirements: without aligned SPF, DKIM and DMARC, invoices, order confirmations and password resets stop arriving.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Inventory every service that sends mail on behalf of your domain.</li>
+          <li>Set up <b>SPF, DKIM, DMARC</b> and one-click unsubscribe.</li>
+          <li>Monitor DMARC reports and ramp the policy up to <b>reject</b>.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="woo">
+        <div class="meta"><span class="tag">WordPress · PHP 8.x</span><span class="badge retainer">Maintenance</span></div>
+        <h3>White screen / critical error after an update</h3>
+        <code class="err">There has been a critical error on this website.</code>
+        <p>Outdated plugins or themes incompatible with newer PHP, auto-updates applied straight to production with no staging.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Get the site back online the same day (controlled rollback, visitors see a maintenance page, not an error).</li>
+          <li>Find the offending plugin, patch or replace it.</li>
+          <li>Staging + backups + tested monthly updates.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/tiny-maintenance-mode" target="_blank" rel="noopener">→ Tiny Maintenance Mode (free)</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="security">
+        <div class="meta"><span class="tag">WordPress · security</span><span class="badge retainer">Maintenance</span></div>
+        <h3>Brute-force bots hammering wp-login.php</h3>
+        <code class="err">POST /wp-login.php 200 — 40,000 requests/day</code>
+        <p>Bots guess passwords around the clock, eating server resources and slowing the store for real customers.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Move the login to a custom URL, rate-limit and block at the firewall / CDN.</li>
+          <li>Enforce 2FA for admins, audit user roles, disable XML-RPC if unused.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/custom-login-url-lite" target="_blank" rel="noopener">→ Custom Login URL Lite (free)</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="woo">
+        <div class="meta"><span class="tag">WooCommerce · revenue</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Lost sales from out-of-stock pages and abandoned carts</h3>
+        <p>Visitors land on sold-out products and leave for good; carts are abandoned with no follow-up; low average order value.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Back-in-stock subscriptions and abandoned-cart emails.</li>
+          <li>Relevant cross-sells and upsells on product and cart pages.</li>
+          <li>Tracking so you can see the recovered revenue.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/pluginforge-woo-stock-alerts" target="_blank" rel="noopener">→ Woo Stock Alerts (free)</a>
+        <a class="plug" href="https://pluginsforstores.com/plugin/smart-notifications" target="_blank" rel="noopener">→ Smart Notifications (free)</a>
+        <a class="plug" href="https://pluginsforstores.com/plugin/pluginforge-smart-product-recommendations" target="_blank" rel="noopener">→ Smart Product Recommendations</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="ai">
+        <div class="meta"><span class="tag">LLM API</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>AI integration hits 429s, costs too much or makes things up</h3>
+        <code class="err">429 Too Many Requests · rate_limit_exceeded</code>
+        <p>A chatbot or agent shipped without retries, caching, cost limits or evals — the bill climbs and answer quality drifts.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Retry with backoff, queues and prompt caching.</li>
+          <li>Route each task to the right model, per-user budgets.</li>
+          <li>Automated evals to catch quality regressions.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/shopbot" target="_blank" rel="noopener">→ ShopBot — AI shopping assistant for WooCommerce</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="security">
+        <div class="meta"><span class="tag">Security</span><span class="badge audit">Express audit</span></div>
+        <h3>Exposed API keys and open databases</h3>
+        <p>Secret keys in the frontend bundle or Git history, missing data-access rules (e.g. RLS in Supabase / Firebase rules) — anyone can read your tables.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Scan code, Git history and the public bundle for secrets.</li>
+          <li>Rotate keys, move them server-side, enforce access rules on every table.</li>
+          <li>Secret scanning in CI so it doesn't happen again.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="security">
+        <div class="meta"><span class="tag">WordPress · media</span><span class="badge audit">Express audit</span></div>
+        <h3>“Sorry, you are not allowed to upload this file type” (SVG)</h3>
+        <p>WordPress blocks SVG uploads by default — and the quick fixes found online often allow unsanitised SVGs, which can carry malicious scripts.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Enable SVG uploads only for trusted roles, with script sanitisation.</li>
+        </ol>
+        <a class="plug" href="https://pluginsforstores.com/plugin/simple-svg-uploader" target="_blank" rel="noopener">→ Simple SVG Uploader (free)</a>
+        </details>
+      </article>
+
+      <article class="bug" data-cat="backend">
+        <div class="meta"><span class="tag">Payments · webhooks</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Payment webhooks failing or creating duplicate orders</h3>
+        <code class="err">No signatures found matching the expected signature for payload</code>
+        <p>The body is parsed before the signature check, there's no idempotency, and the provider's retries create duplicate orders.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Verify against the raw body, separate keys per environment.</li>
+          <li>Idempotent processing (each event exactly once) and a queue.</li>
+          <li>Automatic reconciliation between payments and orders.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="frontend">
+        <div class="meta"><span class="tag">Auth · Safari</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Users get logged out at random</h3>
+        <p>Wrong <code>SameSite</code> cookie settings, sessions across different subdomains, third-party cookie restrictions — especially on Safari and iOS.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Reproduce on the affected browsers and trace the session lifecycle.</li>
+          <li>Move auth first-party, set cookie attributes correctly.</li>
+          <li>Secure refresh tokens and end-to-end tests on Safari.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="backend">
+        <div class="meta"><span class="tag">Node · Docker · K8s</span><span class="badge retainer">Maintenance</span></div>
+        <h3>Server keeps restarting (OOMKilled)</h3>
+        <code class="err">FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory</code>
+        <p>Memory leaks, unbounded in-memory caches, container limits that don't match the workload.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Heap snapshots and profiling under real load.</li>
+          <li>Fix the leak, bound the caches, size resources properly.</li>
+          <li>Alerts and dashboards so you see it before your customers do.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="seo">
+        <div class="meta"><span class="tag">Database</span><span class="badge sprint">Fix sprint</span></div>
+        <h3>Pages and APIs slow down as traffic grows</h3>
+        <p>N+1 queries from the ORM, missing indexes, no caching — fine with 100 rows, not with a million.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Measure real queries (EXPLAIN, APM).</li>
+          <li>Indexes, eager loading, proper pagination and caching.</li>
+          <li>Before/after report with response times.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="frontend">
+        <div class="meta"><span class="tag">Mobile · CSS</span><span class="badge audit">Express audit</span></div>
+        <h3>Layout broken on phones</h3>
+        <p>Horizontal scroll, buttons hidden under Safari's toolbar (<code>100vh</code>), the keyboard covering the form, images that jump around (CLS).</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Test on real iOS and Android devices.</li>
+          <li>Dynamic viewport units (<b>dvh</b>, <b>svh</b>), safe areas, reserved space for media.</li>
+          <li>Automated visual tests so it doesn't come back.</li>
+        </ol></details>
+      </article>
+
+      <article class="bug" data-cat="backend">
+        <div class="meta"><span class="tag">CI/CD</span><span class="badge audit">Express audit</span></div>
+        <h3>“Works on my machine” — build fails in CI or on deploy</h3>
+        <p>Different Node/package versions, missing env vars, import case-sensitivity, unpinned dependencies.</p>
+        <details><summary>How we fix it</summary><ol>
+          <li>Reproducible builds: lockfile, pinned versions, same container locally and in CI.</li>
+          <li>Validate environment variables at startup.</li>
+          <li>Preview deploys for every pull request.</li>
+        </ol></details>
+      </article>
+
+    </div>
+    <p class="empty" id="empty">Can't find your problem here? <a href="#contact">Describe it to us</a> — chances are we've seen it before.</p>
+  </div>
+</section>
+
+<section id="plugins">
+  <div class="wrap">
+    <h2>Fixes you can install today</h2>
+    <p class="sub">Some bugs come up so often that we turned the fix into a plugin. Focused, no bloat, built for WordPress and WooCommerce — published on <a href="https://pluginsforstores.com" target="_blank" rel="noopener">PluginsForStores</a>.</p>
+    <div class="plugins">
+      <a class="pcard" href="https://pluginsforstores.com/plugin/zero-config-webp" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Zero-Config WebP Converter</h3><p>Converts uploaded JPEG/PNG to WebP (and AVIF when available).</p><span class="fixes">fixes: slow LCP, heavy images</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/system-font-stack" target="_blank" rel="noopener"><span class="price">FREE</span><h3>System Font Stack</h3><p>Replaces Google Fonts with system fonts — faster and GDPR-friendlier.</p><span class="fixes">fixes: render-blocking fonts</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/auto-image-alt-from-title" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Auto Image Alt From Title</h3><p>Fills empty image alt text from the file name or post title.</p><span class="fixes">fixes: missing [alt] attributes</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/custom-login-url-lite" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Custom Login URL Lite</h3><p>Moves /wp-login to a custom path to cut brute-force bot traffic.</p><span class="fixes">fixes: login brute-force</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/pluginforge-woo-stock-alerts" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Woo Stock Alerts</h3><p>Back-in-stock email subscriptions for out-of-stock products.</p><span class="fixes">fixes: lost sales on sold-out items</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/smart-notifications" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Smart Notifications</h3><p>Automated alerts for comments, users, posts and abandoned carts.</p><span class="fixes">fixes: abandoned carts with no follow-up</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/tiny-maintenance-mode" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Tiny Maintenance Mode</h3><p>One switch: visitors see “We'll be right back”, admins keep working.</p><span class="fixes">fixes: errors shown during repairs</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/simple-svg-uploader" target="_blank" rel="noopener"><span class="price">FREE</span><h3>Simple SVG Uploader</h3><p>SVG uploads in the media library, with script sanitisation.</p><span class="fixes">fixes: “file type not allowed”</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/shopbot" target="_blank" rel="noopener"><span class="price paid">FREE TRIAL</span><h3>ShopBot</h3><p>Conversational AI that helps shoppers find the right product.</p><span class="fixes">fixes: visitors who can't find products</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/pluginforge-smart-product-recommendations" target="_blank" rel="noopener"><span class="price paid">FREE TRIAL</span><h3>Smart Product Recommendations</h3><p>Personalised cross-sells and upsells.</p><span class="fixes">fixes: low average order value</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/pluginforge-seo-automation" target="_blank" rel="noopener"><span class="price paid">FREE TRIAL</span><h3>SEO Automation Suite</h3><p>Automated meta tags, schema markup and internal-link suggestions.</p><span class="fixes">fixes: thin metadata, missing schema</span></a>
+      <a class="pcard" href="https://pluginsforstores.com/plugin/pluginforge-ai-review-manager" target="_blank" rel="noopener"><span class="price paid">FREE TRIAL</span><h3>AI Review Manager</h3><p>Review summaries, sentiment analysis and AI-drafted replies.</p><span class="fixes">fixes: unanswered reviews</span></a>
+    </div>
+    <p style="margin-top:20px"><a class="btn sm" href="https://pluginsforstores.com/plugins" target="_blank" rel="noopener">See all plugins →</a></p>
+  </div>
+</section>
+
+<section id="engagements">
+  <div class="wrap">
+    <h2>Three ways to work together</h2>
+    <p class="sub">We pick the format based on how serious the problem is. Every bug in the catalogue is tagged with the engagement that fits.</p>
+    <div class="models">
+      <div class="model">
+        <span class="badge audit" style="align-self:flex-start">Express audit</span>
+        <h3>Diagnosis in 48 hours</h3>
+        <div class="when">// when you don't know exactly what broke</div>
+        <ul>
+          <li>Review of code, infrastructure and metrics</li>
+          <li>Report with root cause, priorities and a fix estimate</li>
+          <li>Quick wins applied on the spot</li>
+          <li>Fixed price, agreed up front</li>
+        </ul>
+        <a class="btn sm" href="#contact">Request an audit</a>
+      </div>
+      <div class="model featured">
+        <span class="badge sprint" style="align-self:flex-start">Fix sprint</span>
+        <h3>Fixed in 1–2 weeks</h3>
+        <div class="when">// when the problem is clear and costing money</div>
+        <ul>
+          <li>Defined scope, measurable outcome</li>
+          <li>Fix + regression tests + documentation</li>
+          <li>Daily updates and pull requests you can review</li>
+          <li>Guarantee: if the bug comes back, we fix it free</li>
+        </ul>
+        <a class="btn primary sm" href="#contact">Start a sprint</a>
+      </div>
+      <div class="model">
+        <span class="badge retainer" style="align-self:flex-start">Maintenance</span>
+        <h3>Monthly retainer</h3>
+        <div class="when">// so you never end up here again</div>
+        <ul>
+          <li>Monitoring, alerts and backups</li>
+          <li>Security updates tested on staging first</li>
+          <li>Development hours included every month</li>
+          <li>Guaranteed incident response time</li>
+        </ul>
+        <a class="btn sm" href="#contact">Discuss maintenance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <h2>How a fix works</h2>
+    <p class="sub">No vague promises. Every step leaves something concrete behind.</p>
+    <div class="steps">
+      <div class="step"><h3>You describe the problem</h3><p>Error message, URL, when it started. We reply within one business day.</p></div>
+      <div class="step"><h3>We reproduce it</h3><p>No reproduction, no reliable fix. You get confirmation of the real root cause.</p></div>
+      <div class="step"><h3>We fix + test</h3><p>The fix lands in a pull request, with a test proving it won't come back.</p></div>
+      <div class="step"><h3>We ship and watch</h3><p>Deploy, post-launch monitoring and a short report of what changed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="faq">
+  <div class="wrap">
+    <h2>FAQ</h2>
+    <p class="sub">&nbsp;</p>
+    <details><summary>Do you work with clients outside Romania?</summary><p>Yes — we work fully remote with teams and store owners across the EU, UK and US. We're on CET/EET, which overlaps with US East Coast mornings, and we communicate in English async-first (Slack, email, GitHub).</p></details>
+    <details><summary>Do you work on code written by someone else (or by an AI)?</summary><p>Yes — that's most of our projects. We take over legacy code, AI-generated prototypes and projects left behind by previous developers.</p></details>
+    <details><summary>What access do you need?</summary><p>Usually repository access and a staging environment. We only ask for production access when necessary, and you can revoke it any time afterwards. We're happy to sign an NDA.</p></details>
+    <details><summary>How much does it cost?</summary><p>Express audits and fix sprints are fixed-price, agreed before we start. You don't pay open-ended hours for an undefined problem. We invoice in EUR or USD.</p></details>
+    <details><summary>Which stacks do you cover?</summary><p>JavaScript/TypeScript (React, Next.js, Node), PHP / WordPress / WooCommerce, Python, SQL databases, Docker, Vercel, Cloudflare, AWS, plus AI API integrations.</p></details>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="cta">
+      <h2>Got a bug that's costing you customers?</h2>
+      <p>Send us the error message and a link. Within one business day you'll get a first assessment and the right engagement for it.</p>
+      <div class="ctas">
+        <a class="btn primary" href="mailto:petrovicistefan@gmail.com?subject=Bug%20to%20fix&body=What%20happens%3A%0A%0AError%20message%3A%0A%0AURL%20%2F%20stack%3A%0A%0ASince%20when%3A">Email us your bug</a>
+        <a class="btn" href="https://pluginsforstores.com" target="_blank" rel="noopener">PluginsForStores</a>
+        <a class="btn" href="https://github.com/petrovicistefan" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Stefan Petrovici · Remote, EU / UK / US</span>
+    <span><a href="#bugs">Bug catalogue</a> · <a href="#plugins">Plugins</a> · <a href="#engagements">Engagements</a> · <a href="#contact">Contact</a></span>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "How do I fix 'Hydration failed' in Next.js?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Isolate the component that renders differently on server and client, move browser-only logic into useEffect or client components, and use useId for stable IDs."}},
+    {"@type": "Question", "name": "How do I fix 'blocked by CORS policy'?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Configure an explicit allow-list of origins on the server, handle OPTIONS preflight requests, and never use a wildcard origin when sending credentials."}},
+    {"@type": "Question", "name": "Why are my emails going to spam?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Most often SPF, DKIM and DMARC are missing or not aligned — now required by Gmail, Yahoo and Outlook for senders."}},
+    {"@type": "Question", "name": "How do I improve INP in Core Web Vitals?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Reduce main-thread JavaScript, break up long tasks, defer third-party scripts and measure on real-user data."}},
+    {"@type": "Question", "name": "How do I speed up a slow WooCommerce store?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Serve images as WebP/AVIF, replace external Google Fonts with a system font stack, load plugin assets only where needed and fix caching."}}
+  ]
+}
+</script>
+
+<script>
+  (function () {
+    var q = document.getElementById('q');
+    var chips = document.querySelectorAll('.chip');
+    var bugs = document.querySelectorAll('.bug');
+    var empty = document.getElementById('empty');
+    var cat = 'all';
+
+    function apply() {
+      var term = q.value.trim().toLowerCase();
+      var shown = 0;
+      bugs.forEach(function (b) {
+        var ok = (cat === 'all' || b.dataset.cat === cat) &&
+                 (!term || b.textContent.toLowerCase().indexOf(term) !== -1);
+        b.hidden = !ok;
+        if (ok) shown++;
+      });
+      empty.style.display = shown ? 'none' : 'block';
+    }
+
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () {
+        chips.forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+        c.setAttribute('aria-pressed', 'true');
+        cat = c.dataset.cat;
+        apply();
+      });
+    });
+    q.addEventListener('input', apply);
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  })();
+</script>
+</body>
 </html>
