@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mcp-dealfinder — product search for AI assistants</title>
+  <meta name="description" content="An MCP server that lets AI assistants search merchants' official product feeds and return buy links, with a clear affiliate disclosure on every link.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site">
+      <div class="name">mcp-dealfinder</div>
+      <h1>Product search for AI assistants, with honest affiliate links.</h1>
+      <p class="lead">mcp-dealfinder is a small server that lets an AI assistant look up products from merchants' official feeds, compare them, and hand back a buy link. If a link earns a commission, it says so.</p>
+    </header>
+
+    <div class="note">
+      <strong>Status: early preview.</strong> The server runs locally on the user's own computer. A public release is planned and this page will be updated when it happens.
+    </div>
+
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>The user connects mcp-dealfinder to an AI assistant that supports the <a href="https://modelcontextprotocol.io">Model Context Protocol</a>.</li>
+      <li>The user asks something like “find noise-cancelling headphones under 150 EUR and compare the top two”.</li>
+      <li>The assistant searches product data loaded from merchants' own affiliate feeds and shows prices, merchants and links.</li>
+      <li>Every link that can earn a commission carries a visible disclosure.</li>
+    </ol>
+
+    <div class="chat" aria-label="Illustrative example">
+      <div class="who">You</div>
+      <div class="msg">Find noise-cancelling headphones under 250 EUR.</div>
+      <div class="who">Assistant</div>
+      <div class="msg">
+        I found two matches:
+        <ul>
+          <li>Aurelia Calm ANC Headphones — 229.00 EUR at Demo Store <span class="tag">affiliate link</span></li>
+          <li>Kestrel Wired Studio Headphones — 119.00 EUR at Demo Store <span class="tag">affiliate link</span></li>
+        </ul>
+        <span class="caption">Affiliate links: if you buy through them, the publisher may earn a commission at no extra cost to you.</span>
+      </div>
+    </div>
+    <p class="caption">Illustrative example using fictional demo products.</p>
+
+    <h2>Principles</h2>
+    <ul class="principles">
+      <li><strong>Official data only.</strong> Product data comes from feeds and APIs that merchants and affiliate networks provide for this purpose. No scraping.</li>
+      <li><strong>Disclosure on every affiliate link.</strong> The server returns the disclosure text together with the link and instructs the assistant to show it.</li>
+      <li><strong>Ranking ignores commission.</strong> Results are ordered by how well they match the search, or by price when the user asks. Commission rates are not part of the ranking.</li>
+      <li><strong>No invented facts.</strong> The assistant is told to state only what is in the product data: price, brand, category, description.</li>
+      <li><strong>Prices can be out of date.</strong> They are as of the last feed refresh and are not converted between currencies. The merchant's page is always the source of truth.</li>
+    </ul>
+
+    <h2>Learn more</h2>
+    <p>Read how affiliate links work in the <a href="affiliate-disclosure.html">affiliate disclosure</a> and how data is handled in the <a href="privacy.html">privacy policy</a>.</p>
+
+    <footer class="site">
+      <a href="affiliate-disclosure.html">Affiliate disclosure</a>
+      <a href="privacy.html">Privacy</a>
+      <div>Published by Stefan Petrovici · Contact: hello@petrovicistefan.ro</div>
+    </footer>
+  </div>
+</body>
+</html>
